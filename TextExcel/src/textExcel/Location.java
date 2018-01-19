@@ -1,12 +1,36 @@
 package textExcel;
 
-//*******************************************************
-//DO NOT MODIFY THIS FILE!!!
-//*******************************************************
+//Update this file with your own code.
 
-public interface Location
+public class SpreadsheetLocation implements Location
 {
-	// represents a location like B6, must be implemented by your SpreadsheetLocation class
-	int getRow(); // gets row of this location
-	int getCol(); // gets column of this location
+	private int row;
+	private int col;
+	private String cellName;
+	
+	 public SpreadsheetLocation(int rowp, int colp) {
+	        row = rowp;
+	        col = colp;
+	    }
+	
+    @Override
+    public int getRow()
+    {
+        return row;
+    }
+
+    @Override
+    public int getCol()
+    {
+        return col;
+    }
+   
+    
+    public SpreadsheetLocation(String cellName)
+    {
+    	this.cellName = cellName;
+    	col = (int) cellName.toUpperCase().charAt(0) - (int) 'A';
+    	row = Integer.parseInt(cellName.substring(1)) - 1;
+    }
+
 }
