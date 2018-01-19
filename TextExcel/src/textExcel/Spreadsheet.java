@@ -21,7 +21,42 @@ public class Spreadsheet implements Grid
 	@Override
 	public String processCommand(String command)
 	{
-		return "";
+		if(command.equals(""))
+			return "";
+		if(command.length() <= 3)
+		    return inspect(command);
+		if(command.contains("="))
+			return assignment(command);
+		if(command.toLowerCase().contains("clear") && command.length() > 5)
+			return clearOne(command);
+		else
+			return clear();
+	}
+	public String inspect(String command) {
+		SpreadsheetLocation Cell = new SpreadsheetLocation(command);
+		int row = Cell.getRow();
+		int col = Cell.getCol();
+		cell[row][col] = getCell(Cell);
+		String s = cell[row][col].fullCellText();
+		return s;
+		
+	}
+	
+    public String assignment(String command) {
+    	int equalIndex = command.indexOf("=");
+		String word = command.substring(equalIndex + 2);
+		String numWord = command.substring(equalIndex + 2);
+		String cellName = command.substring(0 , equalIndex - 1);
+		
+		SpreadsheetLocation Cell = new SpreadsheetLocation(cellName);
+		int row = Cell.getRow();
+		int col = Cell.getCol();
+			
+		if(command.contains("\""))
+		    cell[row][col] = new TextCell(word.substring(0, word.length()));
+		
+		
+		return getGridText();
 	}
 
 	@Override
@@ -46,9 +81,43 @@ public class Spreadsheet implements Grid
 	@Override
 	public String getGridText()
 	{
-		String outcome = "";
-		return null;
+		String sheet = "   |A         |B         |C         |D         |E         |F         |"
+				+ "G         |H         |I         |J         |K         |L         |";
+		
+		
+		for(int i = 0; i < cell.length; i++) {
+			if(i < 9)
+			    sheet += "\n" + (i+1) + "  |";
+			if(i >= 9)
+				sheet += "\n" + (i+1) + " |";
+			for(int j = 0; j < cell[i].length; j++) {
+				sheet += cell[i][j].abbreviatedCellText() + "|";	
+			}
+		}
+		sheet += "\n";
+		
+		return sheet;
 	}
+	public String clear() {
+    	for(int i = 0; i < cell.length; i++) {
+			for(int j = 0; j < cell[j].length; j++) {
+				cell[i][j] = new EmptyCell();
+			}
+		}
+    	return getGridText();
+    }
+    
+    public String clearOne(String command) {
+    	String cellName = command.substring(6);
+    	
+    	SpreadsheetLocation Cell = new SpreadsheetLocation(cellName);
+		int row = Cell.getRow();
+		int col = Cell.getCol();
+		
+		cell[row][col] = new EmptyCell();
+		return getGridText();
+    }
+
 	
 	// You are free to use this helper method.  It takes a column letter (starting at "A")
 	// and returns the column number corresponding to that letter (0 for "A", 1 for "B", etc.)  
